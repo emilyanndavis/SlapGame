@@ -1,11 +1,48 @@
 <html>
 <head>
-	<title>Slap Object Game</title>
-	<link rel="stylesheet" href="">
-	<link rel="stylesheet" href="">
-	<script src=""></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Ice Block Penguin Game</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="game.css">
+	<script src="game.js"></script>
 </head>
 <body>
-	
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+				<h1>The Ice Wizard has trapped a penguin in a giant block of ice!</h1>
+				<h1>Melt the ice to free the penguin!</h1>
+				<div class="iceblock" id="ice-block"></div>
+				<div class="penguin-locator col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+					<img class="penguin" src="/assets/images/penguin-23159_960_720.png" alt="penguin" />
+				</div>
+				<div id="melt-options" class="visible">
+					<h4>Choose a heat source:</h4>
+					<button type="button" onclick="melt('lightMatch')">Match</button>
+					<button type="button" onclick="melt('lightCandle')">Candle</button>
+					<button type="button" onclick="melt('useBlowtorch')">Blowtorch</button>
+				</div>
+				<div id="freeze-options" class="hidden">
+					<h4>Uh oh. The Ice Wizard is determined to keep that ice from melting.</h4>
+					<button id="btn-useFan" type="button">Fan</button>
+					<button id="btn-blastAC" type="button">Air Conditioner</button>
+					<button id="btn-freezeSpell" type="button">Magic Freeze Spell</button>
+				</div>
+				<div id="distract-wizard-options" class="visible">
+					<h4>OR </br> Decrease the Ice Wizard's power with a distraction!</h4>
+					<button type="button" onclick="distractIceWizard('iceCream')">Toss him an ice cream bar</button>
+					<button type="button" onclick="distractIceWizard('spellBook')">Mix up the pages of his spell book</button>
+					<button type="button" onclick="distractIceWizard('cutElectricity')">Cut the electricity</button>
+				</div>
+				<div id="distract-rescuer-options" class="hidden">
+					<h4>He may even try to distract you from your rescue mission!</h4>
+					<button id="btn-iceCream" type="button">Ice cream bar</button>
+					<button id="btn-waterBalloon" type="button">Water balloons</button>
+					<button id="btn-tempFreeze" type="button">Temporary freeze spell</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

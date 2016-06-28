@@ -1,1 +1,42 @@
 /*Only use this file if you want to override bootstrap or create your own style*/
+
+.iceblock {
+    background-color: #9ce;
+    opacity: 0.9;
+    border-radius: 5px;
+    position: relative;
+    height: 300px;
+    width: 300px;
+    margin: auto;
+}
+
+.penguin-locator {
+    position: relative;
+}
+
+.penguin {
+    display: block;
+    position: absolute;
+    top: -250px;
+    left: 10%;
+    z-index: -1;
+    opacity: 1;
+    height: 180px;
+    margin: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}
+
+button:hover {
+    background-color: #9ce;
+}
+
+.btn-highlight {
+    background-color: #a9e;
+}
