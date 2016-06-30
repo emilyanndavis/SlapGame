@@ -1,13 +1,13 @@
 /*Only use this file if you want to override bootstrap or create your own style*/
 
 .iceblock {
-    background-color: #9ce;
+    background-color: #58a;
     opacity: 0.9;
     border-radius: 5px;
     position: relative;
-    height: 300px;
-    width: 300px;
-    margin: auto;
+    height: 270px;
+    width: 270px;
+    margin: 20px auto 0 auto;
 }
 
 .penguin-locator {
@@ -17,11 +17,11 @@
 .penguin {
     display: block;
     position: absolute;
-    top: -250px;
-    left: 10%;
+    top: -210px;
+    left: 25%;
     z-index: -1;
     opacity: 1;
-    height: 180px;
+    height: 140px;
     margin: auto;
 }
 
@@ -33,11 +33,11 @@
     display: block;
 }
 
-button:hover {
+.rescuer-options button:hover, .reset-button:hover {
     background-color: #9ce;
 }
 
-.btn-highlight {
+.btn.highlight {
     background-color: #a9e;
 }
 
@@ -45,6 +45,87 @@ button:hover {
     margin: auto;
 }
 
-p {
-    font-size: 18px;
+.turn-results {
+    font-size: 24px;
+    line-height: 80%;
 }
+
+.turn-results .description {
+    font-weight: 600;
+    color: #146;
+}
+
+.turn-results .ice-status {
+    color: #287;
+    font-weight: 600;
+}
+
+.turn-results .player-status {
+    color: #728;
+    font-weight: 600;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.game-goal {
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.your-turn {
+    color: #3a0;
+    font-size: 30px;
+}
+
+.computer-turn {
+    color: #c40;
+}
+
+h4 {
+    font-size: 22px;
+    font-weight: 400;
+}
+
+h1, h2, h4, p {
+    font-family: 'Josefin Sans', Helvetica, Arial, sans-serif;
+}
+
+button {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+body {
+    background-color: #efefff;
+}
+
+.player-options-heading {
+    color: #368;
+    font-weight: 700;
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.player-options-heading .highlight {
+    color: #fefefe;
+    background-color: #368;
+}
+
+.rescuer-options {
+    text-align: left;
+}
+
+.visible.wizard-options {
+    text-align: right;
+    padding-bottom: 40px;
+}
+
+
+

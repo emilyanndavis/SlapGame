@@ -2,7 +2,7 @@ var turnCount = 0;
 
 var iceBlock = {
 // CHANGE THIS FOR QUICKER TESTING OF ENDGAME() - BE SURE TO RESET TO 90 FOR FULL GAME!
-    solidity: 30
+    solidity: 90
 }
 
 var players = {
@@ -32,7 +32,7 @@ var players = {
             },
             cutElectricity: {
                 defense: 0.75,
-                resultDisplay: ' by turning off the electricity'
+                resultDisplay: ' by disconnecting the electricity'
             }
         }
     },
@@ -71,6 +71,10 @@ var players = {
 /* MELT AND FREEZE FUNCTIONS AND THEIR EFFECT ON ICE BLOCK APPEARANCE */
 
 function melt(fireSource) {
+    if (document.getElementById('game-exposition').className == 'visible' && document.getElementById('game-goal').className == 'visible') {
+        document.getElementById('game-exposition').className = 'animated fadeOutRight';
+        document.getElementById('game-goal').className = 'animated fadeOutRight';
+    }
     var meltAmount = players.penguinRescuer.actions[fireSource].meltPower * players.penguinRescuer.power; 
     if (iceBlock.solidity - meltAmount <= 0) {
         iceBlock.solidity = 0;
@@ -82,7 +86,8 @@ function melt(fireSource) {
         showResults('penguinRescuer', 'the ice block', fireSource);
         players.penguinRescuer.power = 1;
         turnCount++;
-        showOptions();
+        whoseTurnIsIt();
+        //showOptions();
         showComputerTurn();
     }
 }
@@ -97,8 +102,10 @@ function freeze(coldSource) {
     setIceOpacity();
     showResults('iceWizard', 'the ice block', coldSource);
     players.iceWizard.power = 1;
+    document.getElementById('btn-' + coldSource).className = 'btn'; 
     turnCount++;
-    showOptions();
+    whoseTurnIsIt();
+    //showOptions();
 }
 
 function setIceOpacity() {
@@ -109,12 +116,17 @@ function setIceOpacity() {
 /* DISTRACT FUNCTIONS */
 
 function distractIceWizard(method) {
+    if (document.getElementById('game-exposition').className == 'visible' && document.getElementById('game-goal').className == 'visible') {
+        document.getElementById('game-exposition').className = 'animated fadeOutRight';
+        document.getElementById('game-goal').className = 'animated fadeOutRight';
+    }
     var distractionPower = players.penguinRescuer.actions[method].defense * players.penguinRescuer.power;
     players.iceWizard.power = 1 - distractionPower;
     showResults('penguinRescuer', 'iceWizard', method);
     turnCount++;
+    whoseTurnIsIt();
     players.penguinRescuer.power = 1;
-    showOptions();
+    //showOptions();
     showComputerTurn();
 }
 
@@ -123,29 +135,45 @@ function distractPenguinRescuer(method) {
     players.penguinRescuer.power = 1 - distractionPower;
     showResults('iceWizard', 'penguinRescuer', method);
     turnCount++;
+    whoseTurnIsIt();
     players.iceWizard.power = 1;
-    showOptions();
+    document.getElementById('btn-' + method).className = 'btn'; 
+    //showOptions();
 }
 
 /* TOGGLE DISPLAY BASED ON WHOSE TURN IT IS */
+/* currently disabled because it was disorienting to see the ice wizard's (computer's) options only during the few seconds of automation/animation */
 
-function showOptions() {
-    var highlighted = document.getElementsByClassName('btn-highlight');
-    if (highlighted.length > 0) {
-        highlighted[0].className = '';
-    }
-    if (turnCount % 2 === 1) {
-        // show computer options (freeze and distract) and hide player options
-        document.getElementById('freeze-options').className = 'visible';
-        document.getElementById('distract-rescuer-options').className = 'visible';
-        document.getElementById('melt-options').className = 'hidden';
-        document.getElementById('distract-wizard-options').className = 'hidden';
+// function showOptions() {
+//     var highlighted = document.getElementsByClassName('btn-highlight');
+//     if (highlighted.length > 0) {
+//         highlighted[0].className = 'btn';
+//     }
+//     if (turnCount % 2 === 1) {
+//         // show computer options (freeze and distract) and hide player options
+//         document.getElementById('freeze-options').className = 'visible';
+//         document.getElementById('distract-rescuer-options').className = 'visible';
+//         document.getElementById('melt-options').className = 'hidden';
+//         document.getElementById('distract-wizard-options').className = 'hidden';
+//     } else {
+//         // show player options (melt and distract) and hide computer options
+//         document.getElementById('melt-options').className = 'visible';
+//         document.getElementById('distract-wizard-options').className = 'visible';
+//         document.getElementById('freeze-options').className = 'hidden';
+//         document.getElementById('distract-rescuer-options').className = 'hidden';
+//     }
+// }
+
+/* SHOW WHOSE TURN IT IS */
+
+function whoseTurnIsIt() {
+    var whoseTurn = document.getElementById('whose-turn');
+    if (turnCount % 2 === 0) {
+        whoseTurn.innerHTML = 'Your turn!';
+        whoseTurn.className = 'text-center your-turn animated fadeInLeft';
     } else {
-        // show player options (melt and distract) and hide computer options
-        document.getElementById('melt-options').className = 'visible';
-        document.getElementById('distract-wizard-options').className = 'visible';
-        document.getElementById('freeze-options').className = 'hidden';
-        document.getElementById('distract-rescuer-options').className = 'hidden';
+        whoseTurn.innerHTML = 'Computer\'s turn';
+        whoseTurn.className = 'text-center computer-turn animated fadeInRight';
     }
 }
 
@@ -173,17 +201,18 @@ function showComputerTurn() {
         timeoutID = window.setTimeout(freeze, 4000, computerChoice);
     } else {
         timeoutID = window.setTimeout(distractPenguinRescuer, 4000, computerChoice);
-    } 
+    }
 }
 
 function highlight(element) {
-    element.className = 'btn-highlight';
+    element.className += ' highlight';
 }
 
 /* SHOW OUTCOME OF EACH TURN */
-// just text for now - eventually this will be more interesting when images and animations come into play
+// just text for now - the goal is to eventually make this more interesting with images and animations
 
 function showResults(player, opponent, action) {
+    var results = document.getElementById('turn-results');
     var verb;
     if (opponent === 'the ice block') {
         if (player === 'penguinRescuer') {
@@ -191,42 +220,42 @@ function showResults(player, opponent, action) {
         } else {
             verb = 'froze';
         }
-        document.getElementById('turn-results').innerHTML = 
-            '<p>' + players[player].name + ' ' + verb + ' ' + opponent + ' ' + players[player].actions[action].resultDisplay + '</p>'; 
-    } 
-    
-    else {
-        document.getElementById('turn-results').innerHTML = 
-            '<p>' + players[player].name + ' distracted ' + players[opponent].name + ' ' + players[player].actions[action].resultDisplay + '</p>'; 
+        results.innerHTML = 
+            '<p class="description">' + players[player].name + ' ' + verb + ' ' + opponent + ' ' + players[player].actions[action].resultDisplay + '.</p>'; 
+    } else {
+        results.innerHTML = 
+            '<p class="description">' + players[player].name + ' distracted ' + players[opponent].name + ' ' + players[player].actions[action].resultDisplay + '.</p>'; 
 
         if (opponent === 'penguinRescuer') {
-        document.getElementById('turn-results').innerHTML += 
-            '<p> Your power level: ' + players.penguinRescuer.power + '</p>';
+        results.innerHTML += 
+            '<p class="player-status"> Your power level: ' + players.penguinRescuer.power.toString().slice(0,4) + '</p>';
         } else {
-        document.getElementById('turn-results').innerHTML += 
-            '<p> Ice Wizard\'s power level: ' + players.iceWizard.power + '</p>';
+        results.innerHTML += 
+            '<p class="player-status"> Ice Wizard\'s power level: ' + players.iceWizard.power.toString().slice(0,4) + '</p>';
         }
     }
-
-    document.getElementById('turn-results').innerHTML += 
-        '<p>Ice level: ' + iceBlock.solidity + '</p>';         
+    results.innerHTML += 
+        '<p class="ice-status">Ice thickness: ' + iceBlock.solidity.toString().slice(0,5) + '</p>';  
+    results.className = 'turn-results animated pulse';       
 }
 
 /* END OF GAME DISPLAY */
 
 function endGame() {
-    document.getElementById('game-header').className = 'animated fadeOutRight';
-    document.getElementById('victory').className = 'visible animated slideInLeft';
+    document.getElementById('victory').className = 'visible animated flip';
     document.getElementById('turn-results').innerHTML = '';    
-    document.getElementById('gameplay-options').className = 'hidden';
-    document.getElementById('reset-button').className = 'reset-button visible';
-    document.getElementById('penguin').className += ' animated tada';
+    document.getElementById('whose-turn').innerHTML = '';    
+    document.getElementById('rescuer-options').className = 'hidden';
+    document.getElementById('wizard-options').className = 'hidden';
+    document.getElementById('reset-button').className = 'btn reset-button visible';
+    document.getElementById('penguin').className = 'penguin animated tada';
 }
 
 /* RESET GAME */
 
 function resetGame() {
-    document.getElementById('game-header').className = 'visible';
+    document.getElementById('game-exposition').className = 'visible';
+    document.getElementById('game-goal').className = 'visible';
     document.getElementById('penguin').className = 'penguin';    
     iceBlock.solidity = 90;
     setIceOpacity();
@@ -234,9 +263,9 @@ function resetGame() {
     players.penguinRescuer.power = 1;
     players.iceWizard.power = 1;
     document.getElementById('victory').className = 'hidden';
-    document.getElementById('gameplay-options').className = 'visible';
-    document.getElementById('melt-options').className = 'visible';
-    document.getElementById('distract-wizard-options').className = 'visible';
-    document.getElementById('reset-button').className = 'reset-button hidden';
+    document.getElementById('rescuer-options').className = 'visible rescuer-options';
+    document.getElementById('wizard-options').className = 'visible wizard-options';
+    document.getElementById('reset-button').className = 'btn reset-button hidden';
+    document.getElementById('whose-turn').innerHTML = '';    
 }
 

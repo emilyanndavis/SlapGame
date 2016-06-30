@@ -5,57 +5,83 @@
 	<title>Ice Block Penguin Game</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<link rel="stylesheet" href="http://s.mlcdn.co/animate.css">
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,400,600,700" rel="stylesheet">
 	<link rel="stylesheet" href="game.css">
 	<script src="game.js"></script>
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
-				<div id="game-header">
-				<h1>The Ice Wizard has trapped a penguin in a giant block of ice!</h1>
-				<h1>Melt the ice to free the penguin!</h1>
+			<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 text-center">
+				<div class="game-header">
+					<h1 id="game-exposition" class="visible">The Ice Wizard has trapped a penguin in a giant block of ice!</h1>
+					<h1 id="game-goal" class="visible">Melt the ice to free the penguin!</h1>
 				</div>
-						<div id="victory" class="hidden">
-							<h1>Hooray! You freed the penguin!</h1>
-						</div>
+				<div id="turn-results" class="turn-results">
+
+				</div>
+				<div id="victory" class="hidden">
+					<h1>Hooray! You freed the penguin!</h1>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
 				<div class="iceblock" id="ice-block"></div>
 				<div class="penguin-locator col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 					<img id="penguin" class="penguin" src="/assets/images/penguin-23159_960_720.png" alt="penguin" />
 				</div>
-				<div class="row text-center">
-					<div class="col-xs-10 col-xs-offset-1">
-						<div id="turn-results">
+			</div>
+		</div>
 
+		<div class="row">
+			<div class="col-xs-10 col-xs-offset-1">
+				<button type="button" id="reset-button" class="btn reset-button hidden" onclick="resetGame()">Play again?</button>
+				<h2 id="whose-turn" class="text-center"></h2>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-12 col-sm-6">
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1">
+						<div id="rescuer-options" class="rescuer-options visible">
+							<h4 class="player-options-heading">Your Options</h4>
+							<div id="melt-options">
+								<h4>Melt the ice</h4>
+								<button type="button" class="btn" onclick="melt('lightMatch')">Match</button>
+								<button type="button" class="btn" onclick="melt('lightCandle')">Candle</button>
+								<button type="button" class="btn" onclick="melt('useBlowtorch')">Blowtorch</button>
+							</div>
+							<div id="distract-wizard-options">
+								<h4>OR</br> Decrease the Ice Wizard's power with a distraction!</h4>
+								<button type="button" class="btn" onclick="distractIceWizard('iceCream')">Ice cream bar</button>
+								<button type="button" class="btn" onclick="distractIceWizard('spellBook')">Spellbook</button>
+								<button type="button" class="btn" onclick="distractIceWizard('cutElectricity')">Disconnect electricity</button>
+							</div>
 						</div>
-						<button type="button" id="reset-button" class="hidden" onclick="resetGame()">Play again?</button>
 					</div>
 				</div>
-				<div id="gameplay-options">
-				<div id="melt-options" class="visible">
-					<h4>Choose a heat source:</h4>
-					<button type="button" onclick="melt('lightMatch')">Match</button>
-					<button type="button" onclick="melt('lightCandle')">Candle</button>
-					<button type="button" onclick="melt('useBlowtorch')">Blowtorch</button>
-				</div>
-				<div id="freeze-options" class="hidden">
-					<h4>Uh oh. The Ice Wizard is determined to keep that ice from melting.</h4>
-					<button id="btn-useFan" type="button">Fan</button>
-					<button id="btn-blastAC" type="button">Air Conditioner</button>
-					<button id="btn-freezeSpell" type="button">Magic Freeze Spell</button>
-				</div>
-				<div id="distract-wizard-options" class="visible">
-					<h4>OR </br></br> Decrease the Ice Wizard's power with a distraction!</h4>
-					<button type="button" onclick="distractIceWizard('iceCream')">Toss him an ice cream bar</button>
-					<button type="button" onclick="distractIceWizard('spellBook')">Mix up the pages of his spell book</button>
-					<button type="button" onclick="distractIceWizard('cutElectricity')">Cut the electricity</button>
-				</div>
-				<div id="distract-rescuer-options" class="hidden">
-					<h4>He may even try to distract you from your rescue mission!</h4>
-					<button id="btn-iceCream" type="button">Ice cream bar</button>
-					<button id="btn-waterBalloon" type="button">Water balloons</button>
-					<button id="btn-tempFreeze" type="button">Temporary freeze spell</button>
-				</div>
+			</div>
+			<div class="col-xs-12 col-sm-6">
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1">
+						<div id="wizard-options" class="wizard-options visible">
+							<h4 class="player-options-heading">Ice Wizard's (Computer's) Options</h4>
+							<div id="freeze-options">
+								<h4>Refreeze the ice</h4>
+								<button id="btn-useFan" class="btn" type="button">Fan</button>
+								<button id="btn-blastAC" class="btn" type="button">Air Conditioner</button>
+								<button id="btn-freezeSpell" class="btn" type="button">Magic Freeze Spell</button>
+							</div>
+							<div id="distract-rescuer-options">
+								<h4>OR</br>Decrease the Penguin Rescuer's power with a distraction!</h4>
+								<button id="btn-iceCream" class="btn" type="button">Ice cream bar</button>
+								<button id="btn-waterBalloon" class="btn" type="button">Water balloons</button>
+								<button id="btn-tempFreeze" class="btn" type="button">Temporary freeze spell</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
