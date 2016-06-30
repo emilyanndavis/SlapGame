@@ -40,3 +40,11 @@ button:hover {
 .btn-highlight {
     background-color: #a9e;
 }
+
+.reset-button {
+    margin: auto;
+}
+
+p {
+    font-size: 18px;
+}

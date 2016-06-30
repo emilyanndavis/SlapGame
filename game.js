@@ -1,5 +1,8 @@
+var turnCount = 0;
+
 var iceBlock = {
-    solidity: 90
+// CHANGE THIS FOR QUICKER TESTING OF ENDGAME() - BE SURE TO RESET TO 90 FOR FULL GAME!
+    solidity: 30
 }
 
 var players = {
@@ -8,89 +11,109 @@ var players = {
         power: 1,
         actions: {
             lightMatch: {
-                meltPower: 4
+                meltPower: 12,
+                resultDisplay: ' with a match'
             },
             lightCandle: {
-                meltPower: 8
+                meltPower: 16,
+                resultDisplay: ' with a candle'
             },
             useBlowtorch: {
-                meltPower: 12
+                meltPower: 20,
+                resultDisplay: ' with a blowtorch'
             },
             iceCream: {
-                defense: 0.25
+                defense: 0.25,
+                resultDisplay: ' with an ice cream bar'
             },
             spellBook: {
-                defense: 0.5
+                defense: 0.5,
+                resultDisplay: ' by mixing up the pages of his spellbook'
             },
             cutElectricity: {
-                defense: 1
+                defense: 0.75,
+                resultDisplay: ' by turning off the electricity'
             }
         }
     },
     iceWizard: {
-        name: 'Ice Wizard',
+        name: 'The Ice Wizard',
         power: 1,
         actions: {
             useFan: {
-                freezePower: 4
+                freezePower: 4,
+                resultDisplay: ' with a fan'
             },
             blastAC: {
-                freezePower: 8
+                freezePower: 8,
+                resultDisplay: ' by blasting the air conditioner'
             },
             freezeSpell: {
-                freezePower: 12
+                freezePower: 12,
+                resultDisplay: ' by casting a freeze spell'
             },
             iceCream: {
-                defense: 0.25
+                defense: 0.25,
+                resultDisplay: ' with an ice cream bar'
             },
             waterBalloon: {
-                defense: 0.5
+                defense: 0.5,
+                resultDisplay: ' by tossing water balloons at your fire sources'
             },
             tempFreeze: {
-                defense: 1
+                defense: 0.75,
+                resultDisplay: ' by casting a temporary freeze spell on you'
             }
         }
     }
 }
 
-var turnCount = 0;
+/* MELT AND FREEZE FUNCTIONS AND THEIR EFFECT ON ICE BLOCK APPEARANCE */
 
 function melt(fireSource) {
     var meltAmount = players.penguinRescuer.actions[fireSource].meltPower * players.penguinRescuer.power; 
-    iceBlock.solidity -= meltAmount;
-    console.log('Ice: ' + iceBlock.solidity);
-    setIceOpacity();
-    players.penguinRescuer.power = 1;
-    turnCount++;
-    console.log('Turn count: ' + turnCount);
-    showOptions();
-    showComputerTurn();
+    if (iceBlock.solidity - meltAmount <= 0) {
+        iceBlock.solidity = 0;
+        setIceOpacity();
+        endGame();
+    } else {
+        iceBlock.solidity -= meltAmount;
+        setIceOpacity();
+        showResults('penguinRescuer', 'the ice block', fireSource);
+        players.penguinRescuer.power = 1;
+        turnCount++;
+        showOptions();
+        showComputerTurn();
+    }
 }
 
 function freeze(coldSource) {
     var freezeAmount = players.iceWizard.actions[coldSource].freezePower * players.iceWizard.power;
-    iceBlock.solidity += freezeAmount;
-    console.log('Ice: ' + iceBlock.solidity);
+    if (iceBlock.solidity + freezeAmount >= 90) {
+        iceBlock.solidity = 90;
+    } else {
+        iceBlock.solidity += freezeAmount;
+    }
     setIceOpacity();
+    showResults('iceWizard', 'the ice block', coldSource);
     players.iceWizard.power = 1;
     turnCount++;
-    console.log('Turn count: ' + turnCount);
     showOptions();
 }
 
 function setIceOpacity() {
     var currentIce = document.getElementById('ice-block');
     currentIce.style.opacity = iceBlock.solidity / 100;
-    console.log('Opacity: ' + currentIce.style.opacity);
 }
+
+/* DISTRACT FUNCTIONS */
 
 function distractIceWizard(method) {
     var distractionPower = players.penguinRescuer.actions[method].defense * players.penguinRescuer.power;
     players.iceWizard.power = 1 - distractionPower;
+    showResults('penguinRescuer', 'iceWizard', method);
     turnCount++;
     players.penguinRescuer.power = 1;
-    console.log('Wizard power: ' + players.iceWizard.power);
-    console.log('Turn count: ' + turnCount);
     showOptions();
     showComputerTurn();
 }
@@ -98,12 +121,13 @@ function distractIceWizard(method) {
 function distractPenguinRescuer(method) {
     var distractionPower = players.iceWizard.actions[method].defense * players.iceWizard.power;
     players.penguinRescuer.power = 1 - distractionPower;
+    showResults('iceWizard', 'penguinRescuer', method);
     turnCount++;
     players.iceWizard.power = 1;
-    console.log('Rescuer power: ' + players.penguinRescuer.power);
-    console.log('Turn count: ' + turnCount);
     showOptions();
 }
+
+/* TOGGLE DISPLAY BASED ON WHOSE TURN IT IS */
 
 function showOptions() {
     var highlighted = document.getElementsByClassName('btn-highlight');
@@ -125,6 +149,18 @@ function showOptions() {
     }
 }
 
+/* AUTOMATE AND ILLUSTRATE COMPUTER'S (ICE WIZARD'S) TURN */
+
+function makeComputerChoice() {
+    var computerOptions = [];
+    for (var action in players.iceWizard.actions) {
+        computerOptions.push(action);
+    }
+    var randomNum = Math.floor(Math.random() * computerOptions.length);
+    var computerChoice = computerOptions[randomNum];
+    return computerChoice;
+}
+
 function showComputerTurn() {
     // randomly choose an option
     var computerChoice = makeComputerChoice();
@@ -140,24 +176,67 @@ function showComputerTurn() {
     } 
 }
 
-function makeComputerChoice() {
-    var computerOptions = ['useFan', 'blastAC', 'freezeSpell', 'iceCream', 'waterBalloon', 'tempFreeze'];
-    var randomNum = Math.floor(Math.random() * computerOptions.length);
-    var computerChoice = computerOptions[randomNum];
-    console.log(computerChoice);
-    return computerChoice;
-}
-
 function highlight(element) {
     element.className = 'btn-highlight';
 }
 
+/* SHOW OUTCOME OF EACH TURN */
+// just text for now - eventually this will be more interesting when images and animations come into play
 
+function showResults(player, opponent, action) {
+    var verb;
+    if (opponent === 'the ice block') {
+        if (player === 'penguinRescuer') {
+            verb = 'melted';
+        } else {
+            verb = 'froze';
+        }
+        document.getElementById('turn-results').innerHTML = 
+            '<p>' + players[player].name + ' ' + verb + ' ' + opponent + ' ' + players[player].actions[action].resultDisplay + '</p>'; 
+    } 
+    
+    else {
+        document.getElementById('turn-results').innerHTML = 
+            '<p>' + players[player].name + ' distracted ' + players[opponent].name + ' ' + players[player].actions[action].resultDisplay + '</p>'; 
 
+        if (opponent === 'penguinRescuer') {
+        document.getElementById('turn-results').innerHTML += 
+            '<p> Your power level: ' + players.penguinRescuer.power + '</p>';
+        } else {
+        document.getElementById('turn-results').innerHTML += 
+            '<p> Ice Wizard\'s power level: ' + players.iceWizard.power + '</p>';
+        }
+    }
 
-function showResults(player, opponent) {
-    // show results, including 
-        // amount of ice melt/freeze and
-        // effect on opponent's power
+    document.getElementById('turn-results').innerHTML += 
+        '<p>Ice level: ' + iceBlock.solidity + '</p>';         
+}
+
+/* END OF GAME DISPLAY */
+
+function endGame() {
+    document.getElementById('game-header').className = 'animated fadeOutRight';
+    document.getElementById('victory').className = 'visible animated slideInLeft';
+    document.getElementById('turn-results').innerHTML = '';    
+    document.getElementById('gameplay-options').className = 'hidden';
+    document.getElementById('reset-button').className = 'reset-button visible';
+    document.getElementById('penguin').className += ' animated tada';
+}
+
+/* RESET GAME */
+
+function resetGame() {
+    document.getElementById('game-header').className = 'visible';
+    document.getElementById('penguin').className = 'penguin';    
+    iceBlock.solidity = 90;
+    setIceOpacity();
+    turnCount = 0;
+    players.penguinRescuer.power = 1;
+    players.iceWizard.power = 1;
+    document.getElementById('victory').className = 'hidden';
+    document.getElementById('gameplay-options').className = 'visible';
+    document.getElementById('melt-options').className = 'visible';
+    document.getElementById('distract-wizard-options').className = 'visible';
+    document.getElementById('reset-button').className = 'reset-button hidden';
 }
 
